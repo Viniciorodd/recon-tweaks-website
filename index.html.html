@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recon Competitive Tweaks v7.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+  --blue:#00C8FF;--blue-dim:#0099CC;--blue-glow:rgba(0,200,255,.1);
+  --blue-border:rgba(0,200,255,.25);
+  --bg:#0A0C10;--bg2:#0D1017;--card:#0F1219;--card2:#131720;
+  --border:#1A1F2E;--border2:#222840;
+  --text:#C8D4E8;--dim:#4A5568;--mid:#7A8AA0;
+  --red:#FF4D6A;--yellow:#FFB830;--green:#00FF88;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:400;overflow-x:hidden;line-height:1.7;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 4px);pointer-events:none;z-index:9999;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.35;animation:gridFade 6s ease-in-out infinite;}
+@keyframes gridFade{0%,100%{opacity:.25}50%{opacity:.45}}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,255,.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:glowPulse 4s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6}50%{transform:translate(-50%,-50%) scale(1.15);opacity:1}}
+.hero-content{position:relative;z-index:2;max-width:800px;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--blue);background:var(--blue-glow);border:1px solid var(--blue-border);padding:6px 20px;display:inline-block;margin-bottom:32px;}
+.hero-title{font-size:clamp(52px,9vw,110px);font-weight:700;line-height:.95;letter-spacing:-3px;color:#fff;margin-bottom:12px;}
+.hero-title span{color:var(--blue);}
+.hero-sub-title{font-family:'JetBrains Mono',monospace;font-size:clamp(14px,2vw,20px);letter-spacing:6px;text-transform:uppercase;color:var(--blue);opacity:.7;margin-bottom:40px;}
+.hero-desc{font-size:16px;color:var(--mid);max-width:520px;margin:0 auto 52px;font-weight:300;}
+.hero-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin-bottom:52px;}
+.hero-stat .num{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:600;color:var(--blue);line-height:1;text-shadow:0 0 30px rgba(0,200,255,.4);}
+.hero-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-top:6px;}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--blue);color:#000;border:none;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:14px 36px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--blue-dim);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,200,255,.3);}
+.btn-outline{background:transparent;color:var(--blue);border:1px solid var(--blue-border);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:14px 36px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+.btn-outline:hover{background:var(--blue-glow);transform:translateY(-2px);}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);animation:bounce 2.5s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,12,16,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;gap:4px;height:52px;overflow-x:auto;}
+nav::-webkit-scrollbar{display:none;}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;letter-spacing:2px;color:var(--blue);margin-right:28px;white-space:nowrap;text-decoration:none;}
+nav a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);text-decoration:none;padding:6px 14px;border:1px solid transparent;white-space:nowrap;transition:all .2s;}
+nav a:hover{color:var(--blue);border-color:var(--blue-border);background:var(--blue-glow);}
+.nav-dl{background:var(--blue);color:#000;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border:none;cursor:pointer;transition:all .2s;margin-left:auto;white-space:nowrap;}
+.nav-dl:hover{background:var(--blue-dim);}
+
+/* ── SECTIONS ── */
+section{max-width:1100px;margin:0 auto;padding:80px 40px;}
+.section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--blue);margin-bottom:10px;opacity:.8;}
+.section-title{font-size:clamp(32px,5vw,52px);font-weight:700;letter-spacing:-1px;color:#fff;line-height:1;margin-bottom:44px;}
+.section-title span{color:var(--blue);}
+hr.divider{border:none;border-top:1px solid var(--border);margin:0;}
+
+/* ── OVERVIEW CARDS ── */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.overview-grid{grid-template-columns:1fr;}}
+.overview-card{background:var(--card);border:1px solid var(--border);padding:28px;position:relative;overflow:hidden;transition:border-color .3s;}
+.overview-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity .3s;}
+.overview-card:hover{border-color:var(--blue-border);}
+.overview-card:hover::before{opacity:.8;}
+.oc-icon{font-size:24px;margin-bottom:14px;}
+.oc-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;}
+.oc-text{font-size:13px;color:var(--mid);line-height:1.7;}
+
+/* ── FEATURE CATEGORIES ── */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.cat-card{background:var(--card);border:1px solid var(--border);padding:24px;transition:all .2s;position:relative;overflow:hidden;}
+.cat-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue-glow),transparent 60%);opacity:0;transition:opacity .3s;}
+.cat-card:hover{border-color:var(--blue-border);transform:translateY(-2px);}
+.cat-card:hover::after{opacity:1;}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
+.cat-icon{width:32px;height:32px;background:var(--blue-glow);border:1px solid var(--blue-border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.cat-name{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#fff;}
+.cat-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);margin-left:auto;opacity:.8;}
+.cat-list{list-style:none;position:relative;z-index:1;}
+.cat-list li{font-size:12px;color:var(--mid);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.cat-list li::before{content:'+';color:var(--blue);font-family:'JetBrains Mono',monospace;font-size:11px;flex-shrink:0;margin-top:1px;}
+.cat-list li:last-child{border-bottom:none;}
+
+/* ── NEW FEATURES ── */
+.new-features{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:720px){.new-features{grid-template-columns:1fr;}}
+.nf-card{background:var(--card);border:1px solid var(--border);padding:24px;text-align:center;transition:border-color .3s;}
+.nf-card:hover{border-color:var(--blue-border);}
+.nf-icon{font-size:32px;margin-bottom:14px;}
+.nf-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;}
+.nf-text{font-size:12px;color:var(--mid);line-height:1.6;}
+.nf-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border:1px solid var(--blue-border);color:var(--blue);background:var(--blue-glow);margin-top:10px;}
+
+/* ── BIOS TABLE ── */
+.bios-table{width:100%;border-collapse:collapse;font-size:13px;}
+.bios-table thead tr{background:var(--blue-glow);}
+.bios-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);padding:12px 18px;text-align:left;border-bottom:1px solid var(--blue-border);}
+.bios-table td{padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text);}
+.bios-table tr:hover td{background:rgba(255,255,255,.02);}
+.bios-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);white-space:nowrap;}
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;text-transform:uppercase;}
+.badge-critical{background:rgba(255,77,106,.1);color:var(--red);border:1px solid rgba(255,77,106,.3);}
+.badge-high{background:rgba(255,184,48,.1);color:var(--yellow);border:1px solid rgba(255,184,48,.3);}
+.badge-info{background:var(--blue-glow);color:var(--blue);border:1px solid var(--blue-border);}
+
+/* ── KEY FLOW ── */
+.key-flow{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:32px;}
+.key-step{background:var(--card);padding:24px 20px;}
+.key-step-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:42px;color:rgba(0,200,255,.12);line-height:1;margin-bottom:10px;}
+.key-step-title{font-size:13px;font-weight:600;text-transform:uppercase;color:#fff;margin-bottom:6px;}
+.key-step-text{font-size:12px;color:var(--mid);line-height:1.6;}
+
+/* ── INSTALL TERMINAL ── */
+.terminal{background:#050608;border:1px solid var(--border);overflow:hidden;margin:20px 0;}
+.terminal-bar{background:#0c0e14;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;gap:7px;}
+.t-dot{width:9px;height:9px;border-radius:50%;}
+.t-red{background:#FF5F57;}.t-yellow{background:#FFBD2E;}.t-green{background:#28CA41;}
+.terminal-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);margin-left:8px;letter-spacing:1px;}
+.terminal-body{padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9;}
+.tp{color:var(--blue);}.tc{color:#fff;}.to{color:var(--dim);}.tok{color:var(--green);}.terr{color:var(--red);}
+
+/* ── TRIAL SECTION ── */
+.trial-card{background:var(--card);border:1px solid var(--blue-border);padding:36px;text-align:center;position:relative;overflow:hidden;max-width:480px;margin:0 auto;}
+.trial-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.trial-num{font-family:'JetBrains Mono',monospace;font-size:80px;font-weight:700;color:var(--blue);line-height:1;text-shadow:0 0 40px rgba(0,200,255,.4);}
+.trial-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--dim);margin-top:4px;margin-bottom:16px;}
+.trial-desc{font-size:14px;color:var(--mid);line-height:1.6;margin-bottom:20px;}
+
+/* ── FAQ ── */
+.faq-grid{display:flex;flex-direction:column;gap:2px;}
+.faq-card{background:var(--card);border:1px solid var(--border);padding:20px 24px;transition:border-color .2s;}
+.faq-card:hover{border-color:var(--blue-border);}
+.faq-q{font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;}
+.faq-a{font-size:13px;color:var(--mid);line-height:1.7;}
+
+/* ── DOWNLOAD SECTION ── */
+.dl-section{background:linear-gradient(180deg,var(--bg),var(--bg2));border-top:1px solid var(--border);padding:100px 40px;text-align:center;position:relative;overflow:hidden;}
+.dl-section::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,255,.07),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.dl-inner{position:relative;z-index:2;max-width:600px;margin:0 auto;}
+.dl-counter{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:28px;}
+.dl-counter span{color:var(--blue);font-size:18px;}
+.dl-title{font-size:clamp(40px,7vw,76px);font-weight:700;letter-spacing:-2px;color:#fff;line-height:.95;margin-bottom:16px;}
+.dl-title span{color:var(--blue);}
+.dl-sub{font-size:15px;color:var(--mid);margin-bottom:48px;}
+.dl-meta{display:flex;justify-content:center;gap:28px;margin-top:28px;flex-wrap:wrap;}
+.dl-meta-item{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dim);text-transform:uppercase;}
+.dl-meta-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);}
+
+/* ── DOWNLOAD MODAL ── */
+.dl-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+.dl-modal-overlay.active{display:flex;}
+.dl-modal{background:var(--card);border:1px solid var(--blue-border);width:100%;max-width:460px;padding:36px;position:relative;animation:modalIn .3s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.dl-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.modal-close{position:absolute;top:14px;right:18px;font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--dim);cursor:pointer;background:none;border:none;transition:color .2s;}
+.modal-close:hover{color:var(--blue);}
+.modal-logo{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;}
+.modal-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:24px;}
+.modal-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px;}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 12px;outline:none;transition:border-color .2s;margin-bottom:14px;}
+.modal-input:focus{border-color:var(--blue-border);}
+.modal-input::placeholder{color:var(--dim);}
+.modal-btn{width:100%;background:var(--blue);color:#000;border:none;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:14px;cursor:pointer;transition:all .2s;margin-top:4px;}
+.modal-btn:hover:not(:disabled){background:var(--blue-dim);}
+.modal-btn:disabled{background:var(--border2);color:var(--dim);cursor:not-allowed;}
+.modal-status{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:center;margin-top:10px;min-height:18px;}
+.modal-status.ok{color:var(--blue);}.modal-status.err{color:var(--red);}
+.modal-privacy{font-size:11px;color:var(--dim);text-align:center;margin-top:14px;line-height:1.5;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:56px 40px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:600px){footer{grid-template-columns:1fr;}}
+.footer-brand{font-size:26px;font-weight:700;letter-spacing:-1px;color:#fff;margin-bottom:6px;}
+.footer-brand span{color:var(--blue);}
+.footer-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:16px;}
+.footer-text{font-size:13px;color:var(--mid);}
+.footer-links{display:flex;flex-direction:column;gap:8px;}
+.footer-link{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);text-decoration:none;transition:color .2s;letter-spacing:.5px;}
+.footer-link:hover{color:var(--blue);}
+.footer-link-icon{width:26px;height:26px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;}
+.footer-bottom{border-top:1px solid var(--border);padding:18px 40px;max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+
+/* info / warn */
+.info-box{background:rgba(0,200,255,.05);border:1px solid var(--blue-border);border-left:3px solid var(--blue);padding:16px 20px;margin-bottom:16px;font-size:13px;color:var(--mid);line-height:1.6;}
+.warn-box{background:rgba(255,77,106,.05);border:1px solid rgba(255,77,106,.2);border-left:3px solid var(--red);padding:16px 20px;margin-bottom:16px;font-size:13px;color:var(--mid);line-height:1.6;}
+
+/* corner brackets */
+.corner-brackets{position:absolute;inset:0;pointer-events:none;}
+.corner-brackets::before,.corner-brackets::after{content:'';position:absolute;width:20px;height:20px;}
+.corner-brackets::before{top:20px;left:20px;border-top:1px solid rgba(0,200,255,.4);border-left:1px solid rgba(0,200,255,.4);}
+.corner-brackets::after{bottom:20px;right:20px;border-bottom:1px solid rgba(0,200,255,.4);border-right:1px solid rgba(0,200,255,.4);}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="corner-brackets"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Competitive Gaming Optimization · VinicioRodd</div>
+    <h1 class="hero-title">RECON<br><span>TWEAKS</span></h1>
+    <div class="hero-sub-title">Ultimate Performance Master Pipeline · v7.0</div>
+    <p class="hero-desc">120+ tweaks. Live server routing. Background optimizer. 3-day free trial. Built exclusively for the Recon Community.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">120+</div><div class="lbl">Tweaks</div></div>
+      <div class="hero-stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+      <div class="hero-stat"><div class="num">3</div><div class="lbl">Day Trial</div></div>
+      <div class="hero-stat"><div class="num">v7</div><div class="lbl">Version</div></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#download" class="btn-primary">↓ Download v7.0</a>
+      <a href="#features" class="btn-outline">View Features</a>
+    </div>
+  </div>
+  <div class="scroll-hint">▼ scroll to read ▼</div>
+</section>
+
+<!-- NAV -->
+<nav>
+  <a href="#top" class="nav-brand">RECON v7.0</a>
+  <a href="#overview">Overview</a>
+  <a href="#features">Tweaks</a>
+  <a href="#new">What's New</a>
+  <a href="#bios">BIOS Guide</a>
+  <a href="#trial">Trial</a>
+  <a href="#keys">License</a>
+  <a href="#install">Install</a>
+  <a href="#faq">FAQ</a>
+  <button class="nav-dl" onclick="openModal()">↓ Download</button>
+</nav>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="section-eyebrow">// What is this</div>
+  <h2 class="section-title">One App.<br><span>Total Control.</span></h2>
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="oc-icon">⚡</div>
+      <div class="oc-title">What It Does</div>
+      <div class="oc-text">Recon Competitive Tweaks v7.0 is a full desktop application engineered for competitive gaming. 120+ registry, service, and system tweaks applied through a clean UI. Background optimizer monitors your game and routes network traffic to the lowest latency server in real time.</div>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🛡</div>
+      <div class="oc-title">Safety First</div>
+      <div class="oc-text">Before touching a single setting the app creates a System Restore Point labeled <strong style="color:#fff">ReconTweaksV70</strong>. Open System Restore, select that checkpoint, and every change is fully undone. Every tweak is individually toggleable — you decide what applies.</div>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🌍</div>
+      <div class="oc-title">Live Server Routing</div>
+      <div class="oc-text">The background optimizer detects when you launch Fortnite, VALORANT, Apex, CS2, or CoD. It pings every regional server, identifies the lowest latency option, and optimizes your network routing automatically. Playing NAC tourney from NAE? Manual region override handles that.</div>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🔑</div>
+      <div class="oc-title">3-Day Free Trial</div>
+      <div class="oc-text">Every download includes a full 3-day free trial with all features unlocked. No credit card. No account. After the trial ends you need a license key from VinicioRodd to continue. Already-licensed machines skip the key screen automatically on every launch.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- WHAT'S NEW -->
+<section id="new">
+  <div class="section-eyebrow">// v7.0 New Features</div>
+  <h2 class="section-title">Built Different<br><span>This Version.</span></h2>
+  <div class="new-features">
+    <div class="nf-card">
+      <div class="nf-icon">🌍</div>
+      <div class="nf-title">Live Server Routing</div>
+      <div class="nf-text">Background optimizer detects your game every 10 seconds, pings all regional servers, and routes DNS to the fastest one automatically. Windows notification fires when routing activates.</div>
+      <div class="nf-badge">NEW IN v7.0</div>
+    </div>
+    <div class="nf-card">
+      <div class="nf-icon">🕹</div>
+      <div class="nf-title">Background Startup</div>
+      <div class="nf-text">App registers to Windows startup and runs silently in the system tray. Keeps optimizing in the background. Double-click the tray icon to open the dashboard anytime.</div>
+      <div class="nf-badge">NEW IN v7.0</div>
+    </div>
+    <div class="nf-card">
+      <div class="nf-icon">⏱</div>
+      <div class="nf-title">3-Day Free Trial</div>
+      <div class="nf-text">Full trial with every feature unlocked. When the trial expires all tweaks are reverted automatically and the app locks until a license key is entered.</div>
+      <div class="nf-badge">NEW IN v7.0</div>
+    </div>
+    <div class="nf-card">
+      <div class="nf-icon">↑</div>
+      <div class="nf-title">Auto-Updates</div>
+      <div class="nf-text">When VinicioRodd pushes a new release every installed user gets it automatically on next launch. No manual downloads ever. New tweaks reach everyone instantly.</div>
+      <div class="nf-badge">NEW IN v7.0</div>
+    </div>
+    <div class="nf-card">
+      <div class="nf-icon">📊</div>
+      <div class="nf-title">System Monitor</div>
+      <div class="nf-text">Live CPU usage with progress bar, RAM used/total, GPU name, disk free space, OS version, uptime, and top 5 CPU processes. Auto-refreshes every 3 seconds.</div>
+      <div class="nf-badge">NEW IN v7.0</div>
+    </div>
+    <div class="nf-card">
+      <div class="nf-icon">⚡</div>
+      <div class="nf-title">Quick Boost</div>
+      <div class="nf-text">Pre-session boost sequence — flush DNS, enable performance mode, clear temp, set game priority — all in one click. Toggle steps on/off. Session history tracks every run.</div>
+      <div class="nf-badge">NEW IN v7.0</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FEATURES / TWEAKS -->
+<section id="features">
+  <div class="section-eyebrow">// 120+ tweaks across 8 categories</div>
+  <h2 class="section-title">Every Tweak<br><span>Explained.</span></h2>
+  <div class="cat-grid">
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">🧠</div>
+        <div class="cat-name">CPU & Kernel</div>
+        <div class="cat-count">20 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>MMCSS profiles — GPU Priority 8 / CPU Priority 6</li>
+        <li>Spectre/Meltdown mitigations disabled for raw speed</li>
+        <li>All CPU cores unparked — 100% min state</li>
+        <li>VBS and HVCI disabled — hypervisor overhead gone</li>
+        <li>C-States locked off — no core sleep during matches</li>
+        <li>Win32PrioritySeparation = 38 for max foreground boost</li>
+        <li>Recon Ultimate Performance power plan activated</li>
+        <li>Timer resolution, IRQ priority, memory compression off</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">🖥</div>
+        <div class="cat-name">GPU & Graphics</div>
+        <div class="cat-count">15 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>HAGS enabled — GPU manages its own command queue</li>
+        <li>MSI mode enforced on all PCI devices</li>
+        <li>DirectX shader cache purged (NVIDIA, AMD, D3D, Intel)</li>
+        <li>All OS animations and taskbar shadows disabled</li>
+        <li>Fullscreen exclusive mode enforced</li>
+        <li>DWM compositing overhead reduced</li>
+        <li>NVIDIA display power saving off, low latency flags set</li>
+        <li>AMD Chill off, ULPS off, deep sleep off</li>
+        <li>HPET high precision event timer disabled</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">🌐</div>
+        <div class="cat-name">Network</div>
+        <div class="cat-count">22 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>Nagle Algorithm disabled — instant packet dispatch</li>
+        <li>TCP Global: no ECN, no timestamps, TTL 64</li>
+        <li>DNS locked to Cloudflare 1.1.1.1</li>
+        <li>Winsock and IP stack reset — clears DNS hijacking</li>
+        <li>NIC Interrupt Moderation disabled</li>
+        <li>AFD socket buffers expanded — 65536 send/receive</li>
+        <li>QoS bandwidth reserve = 0% (default wastes 20%)</li>
+        <li>NetBIOS, LLMNR, LMHOSTS, mDNS all disabled</li>
+        <li>Windows Update suspended and deferred</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">🎯</div>
+        <div class="cat-name">Input & Aim</div>
+        <div class="cat-count">12 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>Mouse acceleration disabled — true 1:1 input</li>
+        <li>Raw 1:1 aim curve binary injected at hardware level</li>
+        <li>audiodg.exe HIGH priority, isolated to Core 2</li>
+        <li>8 game executables set to HIGH CPU priority</li>
+        <li>StickyKeys, ToggleKeys, FilterKeys all disabled</li>
+        <li>USB selective suspend disabled — no peripheral drops</li>
+        <li>Mouse HID power management disabled</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">💾</div>
+        <div class="cat-name">Storage</div>
+        <div class="cat-count">13 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>Force TRIM on all SSDs — full retrim pass</li>
+        <li>Hibernation file wiped — SSD space reclaimed</li>
+        <li>NTFS last access timestamps disabled</li>
+        <li>NTFS memory maximized, 8.3 names disabled</li>
+        <li>Prefetch and Superfetch disabled</li>
+        <li>Pagefile fixed at 4096MB — no dynamic resize overhead</li>
+        <li>Write caching enabled, Windows Update cache cleared</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">⚙️</div>
+        <div class="cat-name">Background Services</div>
+        <div class="cat-count">28 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>SysMain, DiagTrack, dmwappushservice disabled</li>
+        <li>Xbox GameDVR, Game Bar, auto game mode off</li>
+        <li>OneDrive, CDPSvc, WebDAV, Print Spooler stopped</li>
+        <li>Sensor suite, telephony, voice activation stopped</li>
+        <li>Nudge blocker — all content delivery nags off</li>
+        <li>7 telemetry scheduled tasks disabled</li>
+        <li>Search box local only — Bing and Cortana off</li>
+        <li>Security toasts silenced, Defender quiet mode on</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">💬</div>
+        <div class="cat-name">App Control</div>
+        <div class="cat-count">10 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>Discord RAM drops from 800MB to ~300MB</li>
+        <li>Discord hardware acceleration disabled</li>
+        <li>Chrome and Edge background mode disabled</li>
+        <li>Steam, Epic, Riot, Xbox overlays removed</li>
+        <li>Teams, Skype, Spotify autostart disabled</li>
+        <li>NVIDIA container telemetry background process off</li>
+      </ul>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header">
+        <div class="cat-icon">🛡</div>
+        <div class="cat-name">Security</div>
+        <div class="cat-count">8 tweaks</div>
+      </div>
+      <ul class="cat-list">
+        <li>Defender exclusions — 5 game paths + 12 executables</li>
+        <li>Defender signatures updated before scan</li>
+        <li>WHQL only driver enforcement — block unsigned drivers</li>
+        <li>AutoRun disabled on all drives — USB malware blocked</li>
+        <li>Known malware startup registry entries removed</li>
+        <li>Exploit protection CFG and DEP flags set</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BIOS GUIDE -->
+<section id="bios">
+  <div class="section-eyebrow">// Cannot be automated — manual steps</div>
+  <h2 class="section-title">BIOS Settings<br><span>That Matter.</span></h2>
+  <div class="info-box">The app handles everything at the Windows level. These BIOS settings must be changed manually in your firmware. Each one has a real measurable impact — enabling XMP alone can give 5–10% FPS for free.</div>
+  <table class="bios-table">
+    <thead><tr><th>Setting</th><th>What To Do</th><th>Impact</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td>XMP / DOCP / EXPO</td><td>Enable. Your RAM ships running at 2133MHz by default. This unlocks its rated speed (3200/4800/6000MHz+). Free performance with no downside.</td><td>5–10% FPS gain in CPU-bound games</td><td><span class="badge badge-critical">CRITICAL</span></td></tr>
+      <tr><td>Resizable BAR</td><td>Enable. Also enable Above 4G Decoding first — it is required. Allows the CPU to access the full GPU VRAM instead of 256MB chunks at a time.</td><td>Major FPS gain on RTX 30/40 and RX 6000/7000 series</td><td><span class="badge badge-critical">CRITICAL</span></td></tr>
+      <tr><td>C-States</td><td>Disable. Prevents CPU cores from entering sleep states between frames. The app disables them at OS level but BIOS-level disable is stronger.</td><td>Eliminates micro-stutter from core spin-up mid-fight</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Above 4G Decoding</td><td>Enable. Required for Resizable BAR. No downside on modern hardware.</td><td>Prerequisite for Resizable BAR</td><td><span class="badge badge-high">HIGH</span></td></tr>
+      <tr><td>Fast Boot</td><td>Enable. Skips hardware POST tests. Saves 5–15 seconds per restart.</td><td>Faster boot after applying tweaks</td><td><span class="badge badge-info">MEDIUM</span></td></tr>
+      <tr><td>HPET</td><td>Disable if available. The app also disables it at OS level but BIOS removal is more complete.</td><td>Reduces DPC latency — smoother frame pacing</td><td><span class="badge badge-info">MEDIUM</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider">
+
+<!-- TRIAL -->
+<section id="trial">
+  <div class="section-eyebrow">// Try before you buy</div>
+  <h2 class="section-title">3-Day Free<br><span>Trial.</span></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;">
+    <div>
+      <p style="font-size:15px;color:var(--mid);margin-bottom:16px;line-height:1.7;">Every download includes a full 3-day trial with every feature unlocked — tweaks, server routing, background optimizer, system monitor, everything. No credit card, no account, no limits.</p>
+      <p style="font-size:15px;color:var(--mid);margin-bottom:24px;line-height:1.7;">When the trial ends all applied tweaks are automatically reverted and the app locks. Enter a license key from VinicioRodd to restore access permanently.</p>
+      <div class="info-box" style="margin:0">Already-licensed machines skip the key screen on every future launch. One key, one machine, permanent access.</div>
+    </div>
+    <div class="trial-card">
+      <div class="trial-num">3</div>
+      <div class="trial-label">DAYS FREE</div>
+      <div class="trial-desc">All features unlocked. No restrictions. Auto-reverts on expiry. License key restores everything permanently.</div>
+      <a href="#download" class="btn-primary" style="display:inline-flex">↓ Start Free Trial</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- LICENSE KEYS -->
+<section id="keys">
+  <div class="section-eyebrow">// How activation works</div>
+  <h2 class="section-title">License Key<br><span>System.</span></h2>
+  <div class="key-flow">
+    <div class="key-step"><div class="key-step-num">01</div><div class="key-step-title">Enter Key</div><div class="key-step-text">Type your unique key in the format RECON-XXXX-XXXX-V70X when prompted by the app.</div></div>
+    <div class="key-step"><div class="key-step-num">02</div><div class="key-step-title">Online Check</div><div class="key-step-text">The app contacts the Recon key server in real time and verifies your key exists and is unused.</div></div>
+    <div class="key-step"><div class="key-step-num">03</div><div class="key-step-title">Redemption</div><div class="key-step-text">If valid the key is marked used server-side and your machine name is logged. Cannot be reused.</div></div>
+    <div class="key-step"><div class="key-step-num">04</div><div class="key-step-title">Saved Locally</div><div class="key-step-text">Your license is saved locally. Future launches on the same machine skip the key screen automatically.</div></div>
+  </div>
+  <div class="warn-box">Each key is single-use. If someone else uses your key before you it will show as already redeemed. Keep your key private and contact VinicioRodd for a replacement if needed.</div>
+  <div class="info-box">Internet is required only for first activation. After that your license is stored locally and no connection is needed to run the app.</div>
+</section>
+
+<hr class="divider">
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="section-eyebrow">// How to run it</div>
+  <h2 class="section-title">Installation<br><span>Guide.</span></h2>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="t-dot t-red"></div>
+      <div class="t-dot t-yellow"></div>
+      <div class="t-dot t-green"></div>
+      <div class="terminal-title">Recon Competitive Tweaks v7.0 — Setup</div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="tp">STEP 1 &gt;</span> <span class="tc">Download the installer and run it</span></div>
+      <div><span class="to">         Right-click → Run as administrator → Accept UAC prompt</span></div><br>
+      <div><span class="tp">STEP 2 &gt;</span> <span class="tc">App launches, shows benefits screen and EULA</span></div>
+      <div><span class="to">         3-day free trial starts automatically on first launch</span></div><br>
+      <div><span class="tp">STEP 3 &gt;</span> <span class="tc">Enter your license key (or skip to use trial)</span></div>
+      <div><span class="tok">         [ ACCEPTED ] Licensed! Welcome to Recon Tweaks v7.0</span></div><br>
+      <div><span class="tp">STEP 4 &gt;</span> <span class="tc">Click RUN ALL TWEAKS on the dashboard</span></div>
+      <div><span class="to">         Progress: [████████████████░░░░░░░░]  65%</span></div>
+      <div><span class="to">         Step 78/120 › Disabling SysMain...</span></div><br>
+      <div><span class="tp">STEP 5 &gt;</span> <span class="tc">Restart your PC</span></div>
+      <div><span class="tok">         VBS, HVCI, bcdedit, MSI mode all activate on next boot</span></div><br>
+      <div><span class="tp">STEP 6 &gt;</span> <span class="tc">App runs silently in the background from now on</span></div>
+      <div><span class="tok">         Background optimizer starts routing to lowest latency server</span></div>
+    </div>
+  </div>
+  <div class="warn-box">Do not close the app mid-run. Let it reach 100% and show the completion screen. Some tweaks require a restart to take full effect.</div>
+  <div class="info-box">To undo everything: press Win+R, type <strong style="color:#fff">rstrui.exe</strong>, select the restore point named <strong style="color:#fff">ReconTweaksV70</strong>.</div>
+</section>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-eyebrow">// Common questions</div>
+  <h2 class="section-title">FAQ</h2>
+  <div class="faq-grid">
+    <div class="faq-card"><div class="faq-q">Will this get me banned in Fortnite or VALORANT?</div><div class="faq-a">No. Every tweak operates at the Windows OS level — registry values, services, and power settings. Nothing touches game files, memory, or anti-cheat processes. Riot Vanguard, Easy Anti-Cheat, and BattlEye all operate independently of these optimizations. These same settings are used by professional players.</div></div>
+    <div class="faq-card"><div class="faq-q">Is it safe to disable Spectre and Meltdown mitigations?</div><div class="faq-a">On a personal gaming PC you control, yes. The patches were designed to protect shared cloud servers from cross-process attacks. On a single-user gaming machine where you run the only code, the real-world risk is negligible and the performance gain is measurable.</div></div>
+    <div class="faq-card"><div class="faq-q">My antivirus flagged the file. Is it safe?</div><div class="faq-a">Yes. Antivirus tools flag optimization apps because they modify registry keys and disable services — the exact actions the tool is designed to perform. This is a false positive. The app is built with Electron, a trusted framework. You can submit the file to Microsoft at microsoft.com/wdsi/filesubmission to whitelist it permanently.</div></div>
+    <div class="faq-card"><div class="faq-q">Does it work on Windows 10?</div><div class="faq-a">Yes. Compatible with Windows 10 version 1903 and later, and all Windows 11 versions. Win11-specific features (Widgets, Teams Chat, News Feed) silently skip on Windows 10 without any error.</div></div>
+    <div class="faq-card"><div class="faq-q">How does the server routing work exactly?</div><div class="faq-a">The background optimizer polls your running processes every 10 seconds. When it detects a supported game it pings all regional servers for that game with 3 packets each, sorts by average latency, flushes your DNS cache, and sets Cloudflare 1.1.1.1 as primary DNS to ensure the fastest possible resolution path. A Windows notification confirms the best server found.</div></div>
+    <div class="faq-card"><div class="faq-q">Can I run it multiple times?</div><div class="faq-a">Yes. Licensed machines skip the key screen automatically. Running it again reapplies all tweaks — useful after a Windows Update that resets some settings. A new restore point is created each run.</div></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DOWNLOAD SECTION -->
+<div class="dl-section" id="download">
+  <div class="dl-inner">
+    <div class="dl-counter">Total Downloads &nbsp;<span id="dlCount">—</span></div>
+    <h2 class="dl-title">Get The<br><span>Pack.</span></h2>
+    <p class="dl-sub">Download Recon Competitive Tweaks v7.0. 3-day free trial included. License key required after trial.</p>
+    <button class="btn-primary" onclick="openModal()" style="font-size:14px;padding:16px 48px;">
+      ↓ &nbsp; Download v7.0 — Free Trial
+    </button>
+    <div class="dl-meta">
+      <div class="dl-meta-item"><div class="dl-meta-dot"></div>Windows 10 / 11</div>
+      <div class="dl-meta-item"><div class="dl-meta-dot"></div>Admin Required</div>
+      <div class="dl-meta-item"><div class="dl-meta-dot"></div>3-Day Free Trial</div>
+      <div class="dl-meta-item"><div class="dl-meta-dot"></div>Auto-Updates</div>
+      <div class="dl-meta-item"><div class="dl-meta-dot"></div>v7.0 — 120+ Tweaks</div>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOAD MODAL -->
+<div class="dl-modal-overlay" id="dlOverlay">
+  <div class="dl-modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-logo">Recon Tweaks v7.0</div>
+    <div class="modal-sub">Enter your info to download</div>
+    <label class="modal-label">Your Name *</label>
+    <input class="modal-input" id="dlName" placeholder="John Doe" maxlength="60">
+    <label class="modal-label">Discord Username *</label>
+    <input class="modal-input" id="dlDiscord" placeholder="username or @handle" maxlength="60">
+    <label class="modal-label">Email (optional)</label>
+    <input class="modal-input" id="dlEmail" placeholder="you@email.com" type="email" maxlength="80">
+    <button class="modal-btn" id="dlSubmitBtn" onclick="submitDownload()">Download Now</button>
+    <div class="modal-status" id="dlStatus"></div>
+    <div class="modal-privacy">Your info is only used to track Recon Community distribution.<br>Never sold. Never shared outside the community.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">RECON <span>TWEAKS</span></div>
+    <div class="footer-sub">Ultimate Performance Master Pipeline — v7.0</div>
+    <div class="footer-text">Engineered by VinicioRodd for the Recon Community. Built for elite competitive play. Distributed exclusively to verified members.</div>
+  </div>
+  <div class="footer-links">
+    <a class="footer-link" href="#"><div class="footer-link-icon">💬</div>Discord — Contact VinicioRodd</a>
+    <a class="footer-link" href="#"><div class="footer-link-icon">🐦</div>Twitter — @VinicioRodd</a>
+    <a class="footer-link" href="#"><div class="footer-link-icon">📱</div>TikTok — @VinicioRodd</a>
+    <a class="footer-link" href="#"><div class="footer-link-icon">📸</div>Instagram — @VinicioRodd</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <div class="footer-copy">© 2026 VinicioRodd — Recon Community. All rights reserved.</div>
+  <div class="footer-copy">Recon Competitive Tweaks v7.0 · Single-use license required</div>
+</div>
+
+<script>
+const TRACKER_URL  = 'YOUR_GOOGLE_APPS_SCRIPT_TRACKER_URL'
+const DOWNLOAD_URL = 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID'
+
+function openModal() {
+  document.getElementById('dlOverlay').classList.add('active')
+  document.body.style.overflow='hidden'
+  setTimeout(()=>document.getElementById('dlName').focus(),100)
+}
+function closeModal() {
+  document.getElementById('dlOverlay').classList.remove('active')
+  document.body.style.overflow=''
+  document.getElementById('dlStatus').textContent=''
+  document.getElementById('dlStatus').className='modal-status'
+}
+document.getElementById('dlOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('dlOverlay'))closeModal()})
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()})
+
+async function submitDownload() {
+  const name    = document.getElementById('dlName').value.trim()
+  const discord = document.getElementById('dlDiscord').value.trim()
+  const email   = document.getElementById('dlEmail').value.trim()
+  const status  = document.getElementById('dlStatus')
+  const btn     = document.getElementById('dlSubmitBtn')
+  if (!name) { status.textContent='[ ERROR ] Name is required.'; status.className='modal-status err'; document.getElementById('dlName').focus(); return }
+  if (!discord) { status.textContent='[ ERROR ] Discord username is required.'; status.className='modal-status err'; document.getElementById('dlDiscord').focus(); return }
+  btn.disabled=true; btn.textContent='Logging download...'
+  try {
+    await fetch(TRACKER_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,discord,email,version:'v7.0'})
+    })
+  } catch {}
+  status.textContent='[ OK ] Starting download...'; status.className='modal-status ok'
+  btn.textContent='Downloading...'
+  const cur=parseInt(document.getElementById('dlCount').textContent)||0
+  document.getElementById('dlCount').textContent=cur+1
+  setTimeout(()=>{
+    window.location.href=DOWNLOAD_URL
+    setTimeout(()=>{ closeModal(); btn.disabled=false; btn.textContent='Download Now' }, 2000)
+  }, 800)
+}
+
+async function loadCount() {
+  try {
+    const res=await fetch(TRACKER_URL+'?action=count')
+    const data=await res.json()
+    if(data.count!==undefined) document.getElementById('dlCount').textContent=data.count
+  } catch { document.getElementById('dlCount').textContent='0' }
+}
+loadCount()
+</script>
+</body>
+</html>
